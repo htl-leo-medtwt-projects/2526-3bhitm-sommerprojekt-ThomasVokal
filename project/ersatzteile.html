@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AutoFixFast Ersatzteil-Shop – Bremskomponenten, Auspuff, Filter, Zündung und Öle. Direkt online reservieren." />
+  <title>Ersatzteile – AutoFixFast</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <div id="navMount"></div>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero" aria-labelledby="partsHeroHeading">
+    <div class="container">
+      <nav class="breadcrumb animate-fade-in-up" aria-label="Breadcrumb">
+        <a href="index.html">Startseite</a>
+        <span class="breadcrumb-sep" aria-hidden="true">›</span>
+        <span aria-current="page">Ersatzteile</span>
+      </nav>
+      <h1 id="partsHeroHeading" class="animate-fade-in-up" style="animation-delay:0.15s;">Ersatzteil-Shop</h1>
+      <p class="animate-fade-in-up" style="animation-delay:0.3s;">Qualitätsteile von Bosch, Brembo, MANN und mehr – direkt reservieren, wir bauen ein.</p>
+    </div>
+  </section>
+
+  <!-- PARTS SECTION -->
+  <section class="section" aria-labelledby="partsHeading">
+    <div class="container">
+      <h2 class="sr-only" id="partsHeading">Ersatzteile filtern und suchen</h2>
+
+      <!-- Toolbar: Search + Sort -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <div class="search-wrapper">
+            <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input
+              type="search"
+              class="form-input"
+              id="partsSearch"
+              placeholder="Bauteil suchen (z.B. Bremsscheibe, Ölfilter)…"
+              aria-label="Ersatzteile suchen"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <label for="partsSort" class="form-label" style="white-space:nowrap;">Sortieren:</label>
+          <select class="form-select" id="partsSort" aria-label="Sortierung wählen" style="min-width:180px;">
+            <option value="default">Standard</option>
+            <option value="price-asc">Preis ↑ (günstigste zuerst)</option>
+            <option value="price-desc">Preis ↓ (teuerste zuerst)</option>
+            <option value="name-az">Name A–Z</option>
+            <option value="new-first">Neue zuerst</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-bar" role="group" aria-label="Kategorien filtern" id="partsFilter">
+        <button class="filter-pill active" data-category="alle">Alle (20)</button>
+        <button class="filter-pill" data-category="bremsen">🛞 Bremsen</button>
+        <button class="filter-pill" data-category="auspuff">💨 Auspuff</button>
+        <button class="filter-pill" data-category="filter">🌬️ Filter</button>
+        <button class="filter-pill" data-category="zuendung">⚡ Zündung</button>
+        <button class="filter-pill" data-category="oele">🛢️ Öle &amp; Additive</button>
+      </div>
+
+      <!-- Results count -->
+      <div class="results-count" id="partsCount" aria-live="polite">
+        <strong>20</strong> Artikel gefunden
+      </div>
+
+      <!-- Parts Grid -->
+      <div class="parts-grid stagger-children" id="partsGrid" role="list">
+        <!-- Via JS befüllt -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="partsEmpty" style="display:none;" role="status">
+        <div class="empty-state-icon" aria-hidden="true">🔍</div>
+        <h3>Keine Artikel gefunden</h3>
+        <p>Versuchen Sie einen anderen Suchbegriff oder eine andere Kategorie.</p>
+        <button class="btn btn-outline" id="partsResetBtn" style="margin-top: var(--space-4);">Filter zurücksetzen</button>
+      </div>
+
+      <!-- Info Banner -->
+      <div style="
+        background: rgba(124,111,247,.10);
+        border: 1px solid rgba(124,111,247,.2);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5) var(--space-6);
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-top: var(--space-10);
+        flex-wrap: wrap;
+      " role="note">
+        <span style="font-size:1.8rem;" aria-hidden="true">💡</span>
+        <div>
+          <strong>Einbau inklusive?</strong>
+          <p style="font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: 2px;">
+            Wenn wir das Teil einbauen, entfällt die Reservierungsgebühr – einfach bei der Terminvereinbarung angeben.
+          </p>
+        </div>
+        <a href="tel:+43316123456" class="btn btn-primary btn-sm" style="margin-left:auto; flex-shrink:0;">
+          📞 Jetzt anfragen
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div id="footerMount"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/ersatzteile.js"></script>
+</body>
+</html>

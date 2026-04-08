@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AutoFixFast Kunden-Dashboard – Meine Garage, Termin-Status und Digitaler Werkstattpass." />
+  <title>Mein Bereich – AutoFixFast</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <div id="navMount"></div>
+
+  <!-- PAGE HERO (Welcome Banner im Stil des page-hero) -->
+  <section class="page-hero" aria-labelledby="dashboardHeading">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Startseite</a>
+        <span class="breadcrumb-sep" aria-hidden="true">›</span>
+        <span aria-current="page">Mein Bereich</span>
+      </nav>
+      <h1 id="dashboardHeading">Mein Bereich</h1>
+      <p>Ihr persönlicher Überblick – Fahrzeug, aktueller Termin und Werkstattpass.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD BODY -->
+  <main class="section section-sm" aria-label="Dashboard">
+    <div class="container">
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner scroll-reveal" id="welcomeBanner" role="banner">
+        <div class="welcome-text">
+          <h2 id="welcomeTitle">Hallo, Max Mustermann 👋</h2>
+          <p id="welcomeSubtitle">Ihr Fahrzeug wird aktuell bei uns umsorgt. Nächster Ölwechsel in ca. 2.580 km.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap: var(--space-3); flex-shrink:0;">
+          <span class="badge badge-success" style="font-size: var(--font-size-xs);">● Fahrzeug aktuell in der Werkstatt</span>
+          <span style="color: rgba(255,255,255,.6); font-size: var(--font-size-xs);">Mitglied seit März 2021</span>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-layout" style="margin-top: var(--space-6);">
+
+        <!-- MEINE GARAGE -->
+        <div>
+          <div class="eyebrow" style="margin-bottom: var(--space-4);">Meine Garage</div>
+          <div class="vehicle-card" id="vehicleCard" role="region" aria-label="Fahrzeug-Übersicht">
+            <!-- Via JS -->
+          </div>
+        </div>
+
+        <!-- AKTUELLER TERMIN -->
+        <div>
+          <div class="eyebrow" style="margin-bottom: var(--space-4);">Aktueller Termin</div>
+          <div class="appointment-card" id="appointmentCard" role="region" aria-label="Termin-Status">
+            <!-- Via JS -->
+          </div>
+        </div>
+
+        <!-- ÖLWECHSEL ALERT (full width) -->
+        <div class="dashboard-full">
+          <div class="oil-alert animate-fade-in-up" id="oilAlert" role="alert" aria-label="Ölwechsel-Empfehlung">
+            <!-- Via JS -->
+          </div>
+        </div>
+
+        <!-- DIGITALER WERKSTATTPASS (full width) -->
+        <div class="dashboard-full">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap: var(--space-4); margin-bottom: var(--space-6);">
+            <div>
+              <div class="eyebrow">USP – Ihr persönliches Logbuch</div>
+              <h2 style="font-size: var(--font-size-2xl);">Digitaler Werkstattpass</h2>
+            </div>
+            <button
+              class="btn btn-outline"
+              id="exportPassBtn"
+              aria-label="Werkstattpass als PDF exportieren (Demonstration)"
+            >
+              📄 Als PDF exportieren
+            </button>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="grid-4" id="historyStats" style="margin-bottom: var(--space-8);">
+            <!-- Via JS -->
+          </div>
+
+          <!-- Timeline -->
+          <div class="timeline" id="historyTimeline" role="list" aria-label="Reparatur-Historie">
+            <!-- Via JS -->
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footerMount"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

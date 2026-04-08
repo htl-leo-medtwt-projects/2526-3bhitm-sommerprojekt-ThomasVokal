@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AutoFixFast – reduzierte Startseite mit dem gleichen Look wie die Hauptseite." />
+  <title>AutoFixFast</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Hauptnavigation">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="AutoFixFast Startseite">
+        <div class="logo-icon" aria-hidden="true">🔧</div>
+        <span>Auto<span class="logo-fast">Fix</span>Fast</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active" aria-current="page"><span>Startseite</span></a>
+        <a href="leistungen.html" class="nav-link"><span>Leistungen</span></a>
+        <a href="ersatzteile.html" class="nav-link"><span>Ersatzteile</span></a>
+        <a href="dashboard.html" class="nav-link"><span>Mein Bereich</span></a>
+      </div>
+
+      <a href="leistungen.html" class="btn btn-primary btn-sm nav-cta">📞 Jetzt anrufen</a>
+    </div>
+  </nav>
+
+  <section class="hero" aria-labelledby="heroHeading" id="start">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge" aria-label="Zertifizierte Werkstatt">
+          🏅 TÜV-zertifizierte Werkstatt · §57a Prüfstelle
+        </div>
+        <h1 id="heroHeading">
+          Ihr Fahrzeug in den<br /><span>besten Händen.</span>
+        </h1>
+        <p>
+          Schnell, ehrlich und unkompliziert – AutoFixFast in Leonding kümmert sich um Ihr Fahrzeug.
+        </p>
+        <div class="hero-cta">
+          <a href="leistungen.html" class="btn btn-accent btn-lg">📅 Leistungen ansehen</a>
+          <a href="leistungen.html" class="btn btn-outline-white btn-lg">Mehr ansehen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-sm" aria-labelledby="quickAccessHeading">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow">Schnelleinstieg</div>
+        <h2 id="quickAccessHeading">Unsere Top-Leistungen</h2>
+      </div>
+      <div class="quick-access-grid">
+        <a href="leistungen.html" class="quick-card" aria-label="§57a Pickerl – ab 49 Euro">
+          <div class="quick-card-icon" aria-hidden="true">📋</div>
+          <h4>§57a Pickerl</h4>
+          <span class="price">ab € 49,–</span>
+          <span class="badge badge-primary">Jetzt anfragen</span>
+        </a>
+        <a href="leistungen.html" class="quick-card" aria-label="Reifenwechsel – ab 29 Euro">
+          <div class="quick-card-icon" aria-hidden="true">🔄</div>
+          <h4>Reifenwechsel</h4>
+          <span class="price">ab € 29,–</span>
+          <span class="badge badge-primary">Jetzt anfragen</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background-color: var(--color-surface);" aria-labelledby="leistungenTeaserHeading">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow">Leistungskatalog</div>
+        <h2 id="leistungenTeaserHeading">Was wir für Sie tun</h2>
+      </div>
+      <div class="services-grid">
+        <article class="service-card" role="article" aria-label="§57a Pickerl (Begutachtung)">
+          <div class="service-card-icon" aria-hidden="true">📋</div>
+          <div class="service-card-meta">
+            <span class="badge badge-neutral">⏱ 60 Min.</span>
+            <span class="badge badge-accent">★ Beliebt</span>
+          </div>
+          <h3>§57a Pickerl (Begutachtung)</h3>
+          <p>Offizielle Begutachtung gemäß §57a KFG – direkt bei uns im Haus. Pickerl-Kleber inklusive.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top: var(--space-3);">
+            <span class="service-price">ab € 49,–</span>
+            <a href="#" class="btn btn-outline btn-sm">Details</a>
+          </div>
+        </article>
+        <article class="service-card" role="article" aria-label="Reifenwechsel (saisonal)">
+          <div class="service-card-icon" aria-hidden="true">🔄</div>
+          <div class="service-card-meta">
+            <span class="badge badge-neutral">⏱ 45 Min.</span>
+            <span class="badge badge-accent">★ Beliebt</span>
+          </div>
+          <h3>Reifenwechsel (saisonal)</h3>
+          <p>Sommer- auf Winterreifen oder umgekehrt – inkl. Einlagerungsservice für Ihre Reifen.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top: var(--space-3);">
+            <span class="service-price">ab € 29,–</span>
+            <a href="#" class="btn btn-outline btn-sm">Details</a>
+          </div>
+        </article>
+        <article class="service-card" role="article" aria-label="Ölwechsel inkl. Filterpaket">
+          <div class="service-card-icon" aria-hidden="true">🛢️</div>
+          <div class="service-card-meta">
+            <span class="badge badge-neutral">⏱ 60 Min.</span>
+            <span class="badge badge-accent">★ Beliebt</span>
+          </div>
+          <h3>Ölwechsel inkl. Filterpaket</h3>
+          <p>Motoröl und Ölfilter wechseln, Kilometerstand eintragen – alles aus einer Hand.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top: var(--space-3);">
+            <span class="service-price">ab € 79,–</span>
+            <a href="#" class="btn btn-outline btn-sm">Details</a>
+          </div>
+        </article>
+      </div>
+      <div style="text-align:center; margin-top: var(--space-10);">
+        <a href="leistungen.html" class="btn btn-primary btn-lg">Mehr Leistungen →</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: linear-gradient(135deg, #0D0921, #150B3E, #1E0D5C); padding-block: var(--space-16);" aria-labelledby="ctaBannerHeading">
+    <div class="container" style="text-align:center; color:white;">
+      <h2 id="ctaBannerHeading" style="color:white; font-size: var(--font-size-3xl); margin-bottom: var(--space-4);">
+        Bereit für Ihren nächsten Termin?
+      </h2>
+      <p style="color:rgba(255,255,255,.75); font-size: var(--font-size-lg); margin-bottom: var(--space-8); max-width: 500px; margin-inline: auto;">
+        Rufen Sie uns an oder schauen Sie in die Leistungen.
+      </p>
+      <div style="display:flex; gap: var(--space-4); justify-content:center; flex-wrap:wrap;">
+        <a href="leistungen.html" class="btn btn-accent btn-lg">📞 +43 6776 2552 986</a>
+        <a href="leistungen.html" class="btn btn-outline-white btn-lg">Leistungskatalog</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Auto<span class="logo-fast">Fix</span>Fast</div>
+          <p class="footer-desc">Kfz-Werkstatt in Leonding.</p>
+        </div>
+        <div>
+          <p class="footer-heading">Links</p>
+          <ul class="footer-links">
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="leistungen.html">Leistungen</a></li>
+            <li><a href="ersatzteile.html">Ersatzteile</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-heading">Kontakt</p>
+          <ul class="footer-links">
+            <li><a href="#">+43 316 123 456</a></li>
+            <li><a href="#">office@autofixfast.at</a></li>
+            <li><a href="#">Werkstattgasse 12</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-heading">Öffnungszeiten</p>
+          <ul class="footer-links">
+            <li>Mo–Do: 07:30 – 18:00 Uhr</li>
+            <li>Fr: 07:30 – 17:00 Uhr</li>
+            <li>Sa: 08:00 – 13:00 Uhr</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 AutoFixFast</span>
+        <div class="footer-badges">
+          <span class="footer-badge">TÜV</span>
+          <span class="footer-badge">§57a</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

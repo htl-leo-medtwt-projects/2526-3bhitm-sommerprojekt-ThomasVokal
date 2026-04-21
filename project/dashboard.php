@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+$profile = $_SESSION['dashboard_profile'] ?? null;
+if (!is_array($profile)) {
+  $profile = null;
+}
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -18,15 +26,15 @@
       </a>
 
       <div class="nav-links">
-        <a href="index.html" class="nav-link active" aria-current="page"><span>Startseite</span></a>
+        <a href="index.html" class="nav-link"><span>Startseite</span></a>
         <a href="leistungen.html" class="nav-link"><span>Leistungen</span></a>
         <a href="ersatzteile.html" class="nav-link"><span>Ersatzteile</span></a>
-        <a href="dashboard.html" class="nav-link"><span>Mein Bereich</span></a>
+        <a href="dashboard.php" class="nav-link active" aria-current="page"><span>Mein Bereich</span></a>
       </div>
 
       <a href="leistungen.html" class="btn btn-primary btn-sm nav-cta">📞 Jetzt anrufen</a>
     </div>
-  </nav>3
+  </nav>
 
   <!-- PAGE HERO (Welcome Banner im Stil des page-hero) -->
   <section class="page-hero" aria-labelledby="dashboardHeading">
@@ -92,6 +100,13 @@
             </div>
             <button
               class="btn btn-outline"
+              id="editVehicleBtn"
+              aria-label="Fahrzeugdaten bearbeiten"
+            >
+              ✏️ Fahrzeugdaten bearbeiten
+            </button>
+            <button
+              class="btn btn-outline"
               id="exportPassBtn"
               aria-label="Werkstattpass als PDF exportieren (Demonstration)"
             >
@@ -115,10 +130,69 @@
     </div>
   </main>
 
+  <div class="modal-overlay" id="vehicleProfileModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="vehicleProfileTitle">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="vehicleProfileTitle">Fahrzeugdaten erfassen</h2>
+          <p style="color: var(--color-text-muted); margin-top: var(--space-2); font-size: var(--font-size-sm);">
+            Bitte geben Sie Ihre Fahrzeugdaten ein. Die Daten werden in der PHP-Session gespeichert.
+          </p>
+        </div>
+        <button class="modal-close" id="vehicleProfileCloseBtn" aria-label="Dialog schließen">✕</button>
+      </div>
+
+      <form class="modal-body" id="vehicleProfileForm">
+        <div class="grid-2" style="gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label" for="profileFirstName">Vorname</label>
+            <input class="form-input" id="profileFirstName" name="firstName" required autocomplete="given-name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileLicensePlate">Kennzeichen</label>
+            <input class="form-input" id="profileLicensePlate" name="licensePlate" required autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileMake">Marke</label>
+            <input class="form-input" id="profileMake" name="make" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileModel">Modell</label>
+            <input class="form-input" id="profileModel" name="model" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileYear">Baujahr</label>
+            <input class="form-input" id="profileYear" name="year" type="number" min="1980" max="2035" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileMileage">Kilometerstand</label>
+            <input class="form-input" id="profileMileage" name="mileage" type="number" min="0" step="1" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileEngine">Motor (optional)</label>
+            <input class="form-input" id="profileEngine" name="engine" placeholder="z. B. 1.6 TDI" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileColor">Farbe (optional)</label>
+            <input class="form-input" id="profileColor" name="color" placeholder="z. B. Silber" />
+          </div>
+        </div>
+
+        <div style="margin-top: var(--space-6); display:flex; justify-content:flex-end; gap: var(--space-3); flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" id="vehicleProfileCancelBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary">Daten speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <div id="footerMount"></div>
 
   <!-- SCRIPTS -->
+  <script>
+    window.PHP_SESSION_PROFILE = <?php echo json_encode($profile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+  </script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script src="js/dashboard.js"></script>

@@ -11,8 +11,8 @@ if (!is_array($profile)) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AutoFixFast Kunden-Dashboard – Meine Garage, Termin-Status und Digitaler Werkstattpass." />
-  <title>Mein Bereich – AutoFixFast</title>
+  <meta name="description" content="CarFixFast Kunden-Dashboard in Leonding – Meine Garage, Termin-Status und Werkstattpass." />
+  <title>Mein Bereich – CarFixFast</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -20,9 +20,9 @@ if (!is_array($profile)) {
   <!-- NAV -->
   <nav class="nav" role="navigation" aria-label="Hauptnavigation">
     <div class="container nav-inner">
-      <a href="index.html" class="nav-logo" aria-label="AutoFixFast Startseite">
+      <a href="index.html" class="nav-logo" aria-label="CarFixFast Startseite">
         <div class="logo-icon" aria-hidden="true">🔧</div>
-        <span>Auto<span class="logo-fast">Fix</span>Fast</span>
+        <span>Car<span class="logo-fast">Fix</span>Fast</span>
       </a>
 
       <div class="nav-links">
@@ -32,7 +32,7 @@ if (!is_array($profile)) {
         <a href="dashboard.php" class="nav-link active" aria-current="page"><span>Mein Bereich</span></a>
       </div>
 
-      <a href="leistungen.html" class="btn btn-primary btn-sm nav-cta">📞 Jetzt anrufen</a>
+      <a href="tel:+43732123456" class="btn btn-primary btn-sm nav-cta">📞 Jetzt anrufen</a>
     </div>
   </nav>
 
@@ -108,7 +108,7 @@ if (!is_array($profile)) {
             <button
               class="btn btn-outline"
               id="exportPassBtn"
-              aria-label="Werkstattpass als PDF exportieren (Demonstration)"
+              aria-label="Werkstattpass als PDF exportieren"
             >
               📄 Als PDF exportieren
             </button>

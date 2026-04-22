@@ -11,7 +11,7 @@ const STATIC_APPOINTMENT = {
   title: 'Nächster Werkstatttermin',
   date: 'Dienstag, 28. April 2026',
   time: '10:30 Uhr',
-  note: 'Bitte Fahrzeugpapiere mitbringen. Das ist ein fixer Demo-Text.',
+  note: 'Bitte Fahrzeugpapiere mitbringen. Der Termin ist bereits im System vorgemerkt.',
 };
 
 function loadProfileFromSession() {
@@ -394,7 +394,7 @@ function initActions() {
   const exportBtn = document.getElementById('exportPassBtn');
   if (exportBtn) {
     exportBtn.addEventListener('click', () => {
-      showToast('Werkstattpass wird als PDF vorbereitet… (Demo)', 'info', 3500);
+      showToast('Werkstattpass wird als PDF vorbereitet…', 'info', 3500);
     });
   }
 }

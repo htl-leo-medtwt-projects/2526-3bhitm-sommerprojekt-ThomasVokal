@@ -55,7 +55,7 @@ function getFooterHTML() {
       <div class="container">
         <div class="footer-grid">
           <div>
-            <div class="footer-logo">Auto<span class="logo-fast">Fix</span>Fast</div>
+            <div class="footer-logo">Car<span class="logo-fast">Fix</span>Fast</div>
             <p class="footer-desc">Kfz-Werkstatt in Leonding.</p>
           </div>
           <div>
@@ -70,8 +70,8 @@ function getFooterHTML() {
             <p class="footer-heading">Kontakt</p>
             <ul class="footer-links">
               <li><a href="tel:+43316123456">+43 316 123 456</a></li>
-              <li><a href="mailto:office@autofixfast.at">office@autofixfast.at</a></li>
-              <li>Werkstattgasse 12</li>
+              <li><a href="mailto:office@carfixfast.at">office@carfixfast.at</a></li>
+              <li>Werkstattweg 12, 4060 Leonding</li>
             </ul>
           </div>
           <div>
@@ -85,7 +85,7 @@ function getFooterHTML() {
         </div>
 
         <div class="footer-bottom">
-          <span>© 2026 AutoFixFast</span>
+          <span>© 2026 CarFixFast</span>
           <div class="footer-badges">
             <span class="footer-badge">TÜV</span>
             <span class="footer-badge">§57a</span>

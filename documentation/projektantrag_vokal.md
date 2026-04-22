@@ -1,4 +1,4 @@
-# Projektname: AutoFixFast
+# Projektname: CarFixFast
 
 ## USP
 **Digitaler Werkstattpass:** Kunden erhalten nach jeder Reparatur einen digitalen Eintrag in ihrer Historie. Das dient als lückenloses, fälschungssicheres Serviceheft, das den Wiederverkaufswert des Autos steigert und dem Kunden zeigt, wann der nächste Ölwechsel ansteht.

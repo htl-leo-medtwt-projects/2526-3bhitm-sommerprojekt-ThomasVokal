@@ -36,8 +36,8 @@
         <span class="breadcrumb-sep" aria-hidden="true">›</span>
         <span aria-current="page">Ersatzteile</span>
       </nav>
-      <h1 id="partsHeroHeading" class="animate-fade-in-up" style="animation-delay:0.15s;">Ersatzteil-Shop</h1>
-      <p class="animate-fade-in-up" style="animation-delay:0.3s;">Qualitätsteile von Bosch, Brembo, MANN und mehr – direkt reservieren oder einbauen lassen.</p>
+      <h1 id="partsHeroHeading" class="animate-fade-in-up animate-delay-150">Ersatzteil-Shop</h1>
+      <p class="animate-fade-in-up animate-delay-300">Qualitätsteile von Bosch, Brembo, MANN und mehr – direkt reservieren oder einbauen lassen.</p>
     </div>
   </section>
 
@@ -64,8 +64,8 @@
           </div>
         </div>
         <div class="toolbar-right">
-          <label for="partsSort" class="form-label" style="white-space:nowrap;">Sortieren:</label>
-          <select class="form-select" id="partsSort" aria-label="Sortierung wählen" style="min-width:180px;">
+          <label for="partsSort" class="form-label parts-sort-label">Sortieren:</label>
+          <select class="form-select parts-sort-select" id="partsSort" aria-label="Sortierung wählen">
             <option value="default">Standard</option>
             <option value="price-asc">Preis ↑ (günstigste zuerst)</option>
             <option value="price-desc">Preis ↓ (teuerste zuerst)</option>
@@ -96,33 +96,23 @@
       </div>
 
       <!-- Empty State -->
-      <div class="empty-state" id="partsEmpty" style="display:none;" role="status">
+      <div class="empty-state parts-empty" id="partsEmpty" role="status">
         <div class="empty-state-icon" aria-hidden="true">🔍</div>
         <h3>Keine Artikel gefunden</h3>
         <p>Versuchen Sie einen anderen Suchbegriff oder eine andere Kategorie.</p>
-        <button class="btn btn-outline" id="partsResetBtn" style="margin-top: var(--space-4);">Filter zurücksetzen</button>
+        <button class="btn btn-outline parts-reset-btn" id="partsResetBtn">Filter zurücksetzen</button>
       </div>
 
       <!-- Info Banner -->
-      <div style="
-        background: rgba(124,111,247,.10);
-        border: 1px solid rgba(124,111,247,.2);
-        border-radius: var(--radius-xl);
-        padding: var(--space-5) var(--space-6);
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-        margin-top: var(--space-10);
-        flex-wrap: wrap;
-      " role="note">
-        <span style="font-size:1.8rem;" aria-hidden="true">💡</span>
+      <div class="parts-info-banner" role="note">
+        <span class="parts-info-icon" aria-hidden="true">💡</span>
         <div>
           <strong>Einbau inklusive?</strong>
-          <p style="font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: 2px;">
+          <p class="parts-info-text">
             Wenn wir das Teil einbauen, entfällt die Reservierungsgebühr – einfach bei der Terminvereinbarung angeben.
           </p>
         </div>
-        <a href="tel:+43316123456" class="btn btn-primary btn-sm" style="margin-left:auto; flex-shrink:0;">
+        <a href="tel:+43316123456" class="btn btn-primary btn-sm parts-info-action">
           📞 Jetzt anfragen
         </a>
       </div>

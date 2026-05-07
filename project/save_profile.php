@@ -1,11 +1,18 @@
 <?php
-session_start();
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/db.php';
+
 header('Content-Type: application/json; charset=utf-8');
 
 function respond(int $status, array $payload): void {
   http_response_code($status);
   echo json_encode($payload);
   exit;
+}
+
+// Prüfe Auth
+if (!isLoggedIn()) {
+  respond(401, ['ok' => false, 'error' => 'Nicht angemeldet']);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -17,10 +24,6 @@ $data = json_decode($raw, true);
 
 if (!is_array($data)) {
   respond(400, ['ok' => false, 'error' => 'Invalid JSON']);
-}
-
-if (!isset($data['firstName']) || $data['firstName'] === '') {
-  respond(422, ['ok' => false, 'error' => 'Missing required field: firstName']);
 }
 
 if (!isset($data['licensePlate']) || $data['licensePlate'] === '') {
@@ -54,7 +57,6 @@ if (isset($data['color'])) {
 }
 
 $profile = [
-  'firstName' => trim((string)$data['firstName']),
   'licensePlate' => strtoupper(trim((string)$data['licensePlate'])),
   'make' => trim((string)$data['make']),
   'model' => trim((string)$data['model']),
@@ -76,6 +78,84 @@ if ($profile['mileage'] < 0) {
   respond(422, ['ok' => false, 'error' => 'Invalid year or mileage']);
 }
 
-$_SESSION['dashboard_profile'] = $profile;
+$customerId = getCurrentUserId();
+
+try {
+  $pdo = getDbConnection();
+  
+  // Prüfe, ob Auto schon existiert
+  $check = $pdo->prepare(
+    'SELECT id FROM vehicles WHERE account_id = :account_id AND license_plate = :license_plate LIMIT 1'
+  );
+  $check->execute([
+    'account_id' => $customerId,
+    'license_plate' => $profile['licensePlate']
+  ]);
+  
+  $existing = $check->fetch();
+  
+  if ($existing) {
+    // UPDATE
+    $statement = $pdo->prepare(
+      'UPDATE vehicles SET
+        make = :make,
+        model = :model,
+        year = :year,
+        mileage = :mileage,
+        engine = :engine,
+        color = :color,
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id = :id'
+    );
+    
+    $statement->execute([
+      'id' => $existing['id'],
+      'make' => $profile['make'],
+      'model' => $profile['model'],
+      'year' => $profile['year'],
+      'mileage' => $profile['mileage'],
+      'engine' => $engine !== '' ? $engine : null,
+      'color' => $color !== '' ? $color : null,
+    ]);
+  } else {
+    // INSERT
+    $statement = $pdo->prepare(
+      'INSERT INTO vehicles (
+        account_id,
+        license_plate,
+        make,
+        model,
+        year,
+        mileage,
+        engine,
+        color
+      ) VALUES (
+        :account_id,
+        :license_plate,
+        :make,
+        :model,
+        :year,
+        :mileage,
+        :engine,
+        :color
+      )'
+    );
+
+    $statement->execute([
+      'account_id' => $customerId,
+      'license_plate' => $profile['licensePlate'],
+      'make' => $profile['make'],
+      'model' => $profile['model'],
+      'year' => $profile['year'],
+      'mileage' => $profile['mileage'],
+      'engine' => $engine !== '' ? $engine : null,
+      'color' => $color !== '' ? $color : null,
+    ]);
+  }
+} catch (Throwable $exception) {
+  error_log('CarFixFast DB Error: ' . $exception->getMessage());
+  respond(500, ['ok' => false, 'error' => 'Datenbank nicht erreichbar: ' . $exception->getMessage()]);
+}
 
 respond(200, ['ok' => true]);
+

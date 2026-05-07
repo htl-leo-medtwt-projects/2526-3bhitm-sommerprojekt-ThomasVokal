@@ -30,7 +30,7 @@ async function saveProfileToSession(profile) {
   });
 
   if (!response.ok) {
-    throw new Error('Daten konnten nicht in der PHP-Session gespeichert werden.');
+    throw new Error('Daten konnten nicht gespeichert werden.');
   }
 
   let result = null;
@@ -41,7 +41,7 @@ async function saveProfileToSession(profile) {
   }
 
   if (!result.ok) {
-    throw new Error('Session-Speicherung fehlgeschlagen.');
+    throw new Error('Speicherung fehlgeschlagen.');
   }
 }
 
@@ -132,7 +132,7 @@ function renderVehicleCard(vehicle) {
       <span class="vin-value">${escapeHtml(vehicle.vin)}</span>
     </div>
 
-    <div style="padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-border); display:flex; gap: var(--space-3); flex-wrap:wrap;">
+    <div class="vehicle-card-footer">
       <span class="badge badge-warning">⏰ Nächste Inspektion: ${escapeHtml(vehicle.nextInspection)}</span>
       <span class="badge badge-primary">🛢️ Nächster Ölwechsel bei ${vehicle.nextOilChange.atKm.toLocaleString('de-AT')} km</span>
     </div>
@@ -152,12 +152,12 @@ function renderAppointmentCard() {
       <span class="badge badge-primary">Fixer Termin</span>
     </div>
 
-    <div style="padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-border); background: var(--color-surface-2);">
-      <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: var(--space-1);">Hinweis</div>
-      <div style="font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text);">Hier werden aktuelle Termininfos angezeigt</div>
-      <div style="margin-top: var(--space-3); padding: var(--space-3); background: white; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
-        <div style="font-size: var(--font-size-xs); font-weight:600; color: var(--color-text-muted); margin-bottom: var(--space-1);">Notiz</div>
-        <p style="font-size: var(--font-size-xs); color: var(--color-text); font-style:italic;">${escapeHtml(STATIC_APPOINTMENT.note)}</p>
+    <div class="appointment-card-body">
+      <div class="appointment-card-hint">Hinweis</div>
+      <div class="appointment-card-title">Hier werden aktuelle Termininfos angezeigt</div>
+      <div class="appointment-note-card">
+        <div class="appointment-note-label">Notiz</div>
+        <p class="appointment-note-text">${escapeHtml(STATIC_APPOINTMENT.note)}</p>
       </div>
     </div>
   `;
@@ -178,7 +178,7 @@ function renderOilAlert(vehicle) {
         <strong>${oil.atKm.toLocaleString('de-AT')} km</strong>.
       </p>
     </div>
-    <button class="btn btn-outline-white btn-sm" style="margin-left:auto; flex-shrink:0;">📅 Termin anfragen</button>
+    <button class="btn btn-outline-white btn-sm oil-alert-action">📅 Termin anfragen</button>
   `;
 }
 
@@ -208,10 +208,10 @@ function renderHistoryStats(vehicle) {
   let html = '';
   for (const stat of stats) {
     html += `
-      <div class="card card-body" style="text-align:center;">
-        <div style="font-size: 1.8rem; margin-bottom: var(--space-2);" aria-hidden="true">${stat.icon}</div>
-        <div style="font-size: var(--font-size-lg); font-weight: 800; color: var(--color-primary); margin-bottom: 2px;">${escapeHtml(String(stat.value))}</div>
-        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); font-weight:600;">${escapeHtml(stat.label)}</div>
+      <div class="card card-body dashboard-stat-card">
+        <div class="dashboard-stat-icon" aria-hidden="true">${stat.icon}</div>
+        <div class="dashboard-stat-value">${escapeHtml(String(stat.value))}</div>
+        <div class="dashboard-stat-label">${escapeHtml(stat.label)}</div>
       </div>
     `;
   }
@@ -230,10 +230,10 @@ function renderTimeline() {
     html += `
       <div class="timeline-item" role="listitem" aria-label="${escapeHtml(entry.service)}, ${escapeHtml(entry.date)}">
         <div class="timeline-dot dot-${dotColor}" aria-hidden="true"></div>
-        <div class="timeline-card" style="padding: var(--space-4);">
+        <div class="timeline-card timeline-card-content">
           <div class="timeline-service">${escapeHtml(entry.service)}</div>
           <div class="timeline-date">📅 ${escapeHtml(entry.date)} · 📍 ${entry.mileage.toLocaleString('de-AT')} km</div>
-          <div style="margin-top: var(--space-3); font-size: var(--font-size-sm); color: var(--color-text-muted);">
+          <div class="timeline-meta">
             Mechaniker: ${escapeHtml(entry.mechanic)} · Kosten: € ${toDePrice(entry.cost)}
           </div>
         </div>
@@ -293,10 +293,10 @@ function openProfileModal(lock = false) {
   state.modalLocked = lock;
   overlay.classList.add('is-open');
   overlay.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-open');
 
-  if (closeBtn) closeBtn.style.display = lock ? 'none' : '';
-  if (cancelBtn) cancelBtn.style.display = lock ? 'none' : '';
+  if (closeBtn) closeBtn.classList.toggle('is-hidden', lock);
+  if (cancelBtn) cancelBtn.classList.toggle('is-hidden', lock);
 
   const firstInput = document.getElementById('profileFirstName');
   if (firstInput) firstInput.focus();
@@ -309,7 +309,7 @@ function closeProfileModal() {
 
   overlay.classList.remove('is-open');
   overlay.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
+  document.body.classList.remove('modal-open');
 }
 
 function readProfileFromForm() {
@@ -361,7 +361,7 @@ function initProfileModal() {
       state.profile = profile;
       renderDashboard(profile);
       closeProfileModal();
-      showToast('Fahrzeugdaten wurden in der PHP-Session gespeichert.', 'success', 3200);
+      showToast('Fahrzeugdaten wurden gespeichert.', 'success', 3200);
     } catch (error) {
       showToast(error.message, 'warning', 3600);
     }

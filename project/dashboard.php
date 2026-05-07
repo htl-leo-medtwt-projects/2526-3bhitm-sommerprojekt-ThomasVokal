@@ -1,10 +1,50 @@
 <?php
-session_start();
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/db.php';
 
-$profile = $_SESSION['dashboard_profile'] ?? null;
-if (!is_array($profile)) {
-  $profile = null;
+// Prüfe, ob Benutzer angemeldet ist
+if (!isLoggedIn()) {
+  header('Location: login.php');
+  exit;
 }
+
+$customerId = getCurrentUserId();
+$customerName = getCurrentUserName();
+
+// Lade Fahrzeugdaten des Benutzers
+function loadUserVehicle(int $customerId): ?array {
+  try {
+    $pdo = getDbConnection();
+    $statement = $pdo->prepare(
+      'SELECT id, license_plate, make, model, year, mileage, engine, color
+       FROM vehicles
+       WHERE account_id = :account_id
+       ORDER BY updated_at DESC
+       LIMIT 1'
+    );
+    $statement->execute(['account_id' => $customerId]);
+
+    $row = $statement->fetch();
+    if (!is_array($row)) {
+      return null;
+    }
+
+    return [
+      'id' => (int)$row['id'],
+      'licensePlate' => (string)$row['license_plate'],
+      'make' => (string)$row['make'],
+      'model' => (string)$row['model'],
+      'year' => (int)$row['year'],
+      'mileage' => (int)$row['mileage'],
+      'engine' => (string)($row['engine'] ?? ''),
+      'color' => (string)($row['color'] ?? ''),
+    ];
+  } catch (Throwable $exception) {
+    return null;
+  }
+}
+
+$vehicle = loadUserVehicle($customerId);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -32,7 +72,10 @@ if (!is_array($profile)) {
         <a href="dashboard.php" class="nav-link active" aria-current="page"><span>Mein Bereich</span></a>
       </div>
 
-      <a href="tel:+43732123456" class="btn btn-primary btn-sm nav-cta">📞 Jetzt anrufen</a>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span style="font-size: 14px; color: #666;">👤 <?php echo htmlspecialchars($customerName); ?></span>
+        <a href="logout.php" class="btn btn-outline btn-sm" style="margin: 0;">Abmelden</a>
+      </div>
     </div>
   </nav>
 
@@ -59,18 +102,18 @@ if (!is_array($profile)) {
           <h2 id="welcomeTitle">Hallo, Max Mustermann 👋</h2>
           <p id="welcomeSubtitle">Ihr Fahrzeug wird aktuell bei uns umsorgt. Nächster Ölwechsel in ca. 2.580 km.</p>
         </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end; gap: var(--space-3); flex-shrink:0;">
-          <span class="badge badge-success" style="font-size: var(--font-size-xs);">● Fahrzeug aktuell in der Werkstatt</span>
-          <span style="color: rgba(255,255,255,.6); font-size: var(--font-size-xs);">Mitglied seit März 2021</span>
+        <div class="dashboard-summary-actions">
+          <span class="badge badge-success dashboard-summary-badge">● Fahrzeug aktuell in der Werkstatt</span>
+          <span class="dashboard-summary-note">Mitglied seit März 2021</span>
         </div>
       </div>
 
       <!-- Dashboard Grid -->
-      <div class="dashboard-layout" style="margin-top: var(--space-6);">
+      <div class="dashboard-layout">
 
         <!-- MEINE GARAGE -->
         <div>
-          <div class="eyebrow" style="margin-bottom: var(--space-4);">Meine Garage</div>
+          <div class="eyebrow dashboard-section-eyebrow">Meine Garage</div>
           <div class="vehicle-card" id="vehicleCard" role="region" aria-label="Fahrzeug-Übersicht">
             <!-- Via JS -->
           </div>
@@ -78,7 +121,7 @@ if (!is_array($profile)) {
 
         <!-- AKTUELLER TERMIN -->
         <div>
-          <div class="eyebrow" style="margin-bottom: var(--space-4);">Aktueller Termin</div>
+          <div class="eyebrow dashboard-section-eyebrow">Aktueller Termin</div>
           <div class="appointment-card" id="appointmentCard" role="region" aria-label="Termin-Status">
             <!-- Via JS -->
           </div>
@@ -93,10 +136,10 @@ if (!is_array($profile)) {
 
         <!-- DIGITALER WERKSTATTPASS (full width) -->
         <div class="dashboard-full">
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap: var(--space-4); margin-bottom: var(--space-6);">
+          <div class="dashboard-workshop-header">
             <div>
               <div class="eyebrow">USP – Ihr persönliches Logbuch</div>
-              <h2 style="font-size: var(--font-size-2xl);">Digitaler Werkstattpass</h2>
+              <h2 class="dashboard-workshop-title">Digitaler Werkstattpass</h2>
             </div>
             <button
               class="btn btn-outline"
@@ -115,7 +158,7 @@ if (!is_array($profile)) {
           </div>
 
           <!-- Stats Row -->
-          <div class="grid-4" id="historyStats" style="margin-bottom: var(--space-8);">
+          <div class="grid-4 dashboard-stats" id="historyStats">
             <!-- Via JS -->
           </div>
 
@@ -135,15 +178,15 @@ if (!is_array($profile)) {
       <div class="modal-header">
         <div>
           <h2 class="modal-title" id="vehicleProfileTitle">Fahrzeugdaten erfassen</h2>
-          <p style="color: var(--color-text-muted); margin-top: var(--space-2); font-size: var(--font-size-sm);">
-            Bitte geben Sie Ihre Fahrzeugdaten ein. Die Daten werden in der PHP-Session gespeichert.
+          <p class="vehicle-profile-copy">
+            Bitte geben Sie Ihre Fahrzeugdaten ein.
           </p>
         </div>
         <button class="modal-close" id="vehicleProfileCloseBtn" aria-label="Dialog schließen">✕</button>
       </div>
 
       <form class="modal-body" id="vehicleProfileForm">
-        <div class="grid-2" style="gap: var(--space-4);">
+        <div class="grid-2 vehicle-profile-grid">
           <div class="form-group">
             <label class="form-label" for="profileFirstName">Vorname</label>
             <input class="form-input" id="profileFirstName" name="firstName" required autocomplete="given-name" />
@@ -178,7 +221,7 @@ if (!is_array($profile)) {
           </div>
         </div>
 
-        <div style="margin-top: var(--space-6); display:flex; justify-content:flex-end; gap: var(--space-3); flex-wrap:wrap;">
+        <div class="vehicle-profile-actions">
           <button type="button" class="btn btn-outline" id="vehicleProfileCancelBtn">Abbrechen</button>
           <button type="submit" class="btn btn-primary">Daten speichern</button>
         </div>
@@ -191,7 +234,12 @@ if (!is_array($profile)) {
 
   <!-- SCRIPTS -->
   <script>
-    window.PHP_SESSION_PROFILE = <?php echo json_encode($profile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    <?php
+      $initialProfile = is_array($vehicle) ? $vehicle : [];
+      $initialProfile['firstName'] = $customerName;
+    ?>
+    window.PHP_SESSION_PROFILE = <?php echo json_encode($initialProfile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    window.CUSTOMER_ID = <?php echo json_encode($customerId); ?>;
   </script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>

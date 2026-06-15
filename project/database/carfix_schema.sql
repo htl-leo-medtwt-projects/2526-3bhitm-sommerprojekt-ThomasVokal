@@ -128,6 +128,7 @@ CREATE TABLE IF NOT EXISTS parts (
   name VARCHAR(255) NOT NULL,
   brand VARCHAR(100),
   description TEXT,
+  image_path VARCHAR(255),
   price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   stock_quantity INT NOT NULL DEFAULT 0,
   
@@ -242,28 +243,28 @@ ON DUPLICATE KEY UPDATE price = VALUES(price), duration_minutes = VALUES(duratio
 -- ============================================================
 -- ERSATZTEILE (für Ersatzteile-Shop)
 -- ============================================================
-INSERT INTO parts (part_number, name, brand, description, price, stock_quantity)
+INSERT INTO parts (part_number, name, brand, description, image_path, price, stock_quantity)
 VALUES 
-  ('FILTER-OIL-001', 'Ölfilter', 'MANN-FILTER', 'Hochwertiger Ölfilter für VW Golf 1.6', 12.50, 45),
-  ('FILTER-AIR-001', 'Luftfilter', 'BOSCH', 'Luftfilter für VW Golf 1.6 TDI', 15.00, 30),
-  ('BRAKE-PAD-001', 'Bremsbeläge vorne', 'TEXTAR', 'Bremsbeläge Premium für VW Golf', 89.99, 12),
-  ('BRAKE-PAD-002', 'Bremsbeläge hinten', 'TEXTAR', 'Bremsbeläge hinten für VW Golf', 79.99, 8),
-  ('SPARK-PLUG-001', 'Zündkerzen (4er Set)', 'BOSCH', 'Iridium Zündkerzen für VW Golf', 45.00, 22),
-  ('BATTERY-001', 'Starterbatterie', 'VARTA', '12V 77Ah Starterbatterie', 199.99, 5),
-  ('BULB-H7-001', 'Scheinwerferlampe H7', 'OSRAM', 'H7 Halogenlampe 55W', 8.50, 60),
-  ('BULB-H1-001', 'Fernlicht H1', 'PHILIPS', 'H1 Halogenlampe 55W', 7.50, 55),
-  ('RADIATOR-001', 'Kühlmittel', 'SHELL', 'Kühlmittel Konzentrat G12+', 19.99, 35),
-  ('OIL-5W40-001', 'Motoröl 5W-40', 'CASTROL', 'CASTROL MAGNATEC 5W-40, 5L Kanister', 39.99, 28),
-  ('BRAKE-FLUID-001', 'Bremsflüssigkeit DOT4', 'BOSCH', 'Bremsflüssigkeit DOT4, 1L Flasche', 12.50, 20),
-  ('WIPER-BLADE-001', 'Scheibenwischer vorne', 'BOSCH', 'Scheibenwischer-Blatt für VW Golf', 22.00, 40),
-  ('WIPER-BLADE-002', 'Scheibenwischer hinten', 'BOSCH', 'Scheibenwischer-Blatt hinten für Golf', 18.00, 35),
-  ('SHOCK-ABSORBER-001', 'Stoßdämpfer vorne (Paar)', 'BILSTEIN', 'Bilstein B4 Stoßdämpfer vorne', 320.00, 6),
-  ('SHOCK-ABSORBER-002', 'Stoßdämpfer hinten (Paar)', 'BILSTEIN', 'Bilstein B4 Stoßdämpfer hinten', 280.00, 8),
-  ('TIRE-SUMMER-001', 'Sommerreifen 205/55R16', 'MICHELIN', 'Michelin Pilot Sport 3 205/55R16', 189.99, 10),
-  ('TIRE-WINTER-001', 'Winterreifen 205/55R16', 'CONTINENTAL', 'Continental WinterContact TS 860 205/55R16', 159.99, 12),
-  ('BELT-TIMING-001', 'Zahnriemen', 'CONTITECH', 'ContiTech Zahnriemen für VW Golf 1.6', 85.00, 4),
-  ('BELT-SERPENTINE-001', 'Keilriemen', 'GATES', 'Gates Keilriemen für Nebenaggregate', 32.00, 18)
-ON DUPLICATE KEY UPDATE price = VALUES(price), stock_quantity = VALUES(stock_quantity);
+  ('FILTER-OIL-001', 'Ölfilter', 'MANN-FILTER', 'Hochwertiger Ölfilter für VW Golf 1.6', 'assets/parts/filter.svg', 12.50, 45),
+  ('FILTER-AIR-001', 'Luftfilter', 'BOSCH', 'Luftfilter für VW Golf 1.6 TDI', 'assets/parts/filter.svg', 15.00, 30),
+  ('BRAKE-PAD-001', 'Bremsbeläge vorne', 'TEXTAR', 'Bremsbeläge Premium für VW Golf', 'assets/parts/brake.svg', 89.99, 12),
+  ('BRAKE-PAD-002', 'Bremsbeläge hinten', 'TEXTAR', 'Bremsbeläge hinten für VW Golf', 'assets/parts/brake.svg', 79.99, 8),
+  ('SPARK-PLUG-001', 'Zündkerzen (4er Set)', 'BOSCH', 'Iridium Zündkerzen für VW Golf', 'assets/parts/spark.svg', 45.00, 22),
+  ('BATTERY-001', 'Starterbatterie', 'VARTA', '12V 77Ah Starterbatterie', 'assets/parts/spark.svg', 199.99, 5),
+  ('BULB-H7-001', 'Scheinwerferlampe H7', 'OSRAM', 'H7 Halogenlampe 55W', 'assets/parts/spark.svg', 8.50, 60),
+  ('BULB-H1-001', 'Fernlicht H1', 'PHILIPS', 'H1 Halogenlampe 55W', 'assets/parts/spark.svg', 7.50, 55),
+  ('RADIATOR-001', 'Kühlmittel', 'SHELL', 'Kühlmittel Konzentrat G12+', 'assets/parts/oil.svg', 19.99, 35),
+  ('OIL-5W40-001', 'Motoröl 5W-40', 'CASTROL', 'CASTROL MAGNATEC 5W-40, 5L Kanister', 'assets/parts/oil.svg', 39.99, 28),
+  ('BRAKE-FLUID-001', 'Bremsflüssigkeit DOT4', 'BOSCH', 'Bremsflüssigkeit DOT4, 1L Flasche', 'assets/parts/oil.svg', 12.50, 20),
+  ('WIPER-BLADE-001', 'Scheibenwischer vorne', 'BOSCH', 'Scheibenwischer-Blatt für VW Golf', 'assets/parts/spark.svg', 22.00, 40),
+  ('WIPER-BLADE-002', 'Scheibenwischer hinten', 'BOSCH', 'Scheibenwischer-Blatt hinten für Golf', 'assets/parts/spark.svg', 18.00, 35),
+  ('SHOCK-ABSORBER-001', 'Stoßdämpfer vorne (Paar)', 'BILSTEIN', 'Bilstein B4 Stoßdämpfer vorne', 'assets/parts/suspension.svg', 320.00, 6),
+  ('SHOCK-ABSORBER-002', 'Stoßdämpfer hinten (Paar)', 'BILSTEIN', 'Bilstein B4 Stoßdämpfer hinten', 'assets/parts/suspension.svg', 280.00, 8),
+  ('TIRE-SUMMER-001', 'Sommerreifen 205/55R16', 'MICHELIN', 'Michelin Pilot Sport 3 205/55R16', 'assets/parts/tire.svg', 189.99, 10),
+  ('TIRE-WINTER-001', 'Winterreifen 205/55R16', 'CONTINENTAL', 'Continental WinterContact TS 860 205/55R16', 'assets/parts/tire.svg', 159.99, 12),
+  ('BELT-TIMING-001', 'Zahnriemen', 'CONTITECH', 'ContiTech Zahnriemen für VW Golf 1.6', 'assets/parts/default.svg', 85.00, 4),
+  ('BELT-SERPENTINE-001', 'Keilriemen', 'GATES', 'Gates Keilriemen für Nebenaggregate', 'assets/parts/default.svg', 32.00, 18)
+ON DUPLICATE KEY UPDATE price = VALUES(price), stock_quantity = VALUES(stock_quantity), image_path = VALUES(image_path);
 
 -- ============================================================
 -- DEMO-BESTELLUNG (mit Items)

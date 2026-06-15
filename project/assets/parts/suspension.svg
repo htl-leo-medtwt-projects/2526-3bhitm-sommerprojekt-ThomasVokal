@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-label="Fahrwerk Vorschau">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#14211D"/>
+      <stop offset="100%" stop-color="#214235"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" rx="28" fill="url(#bg)"/>
+  <path d="M126 76h148M138 76l42 92h40l42-92" fill="none" stroke="#34D399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="158" cy="168" r="16" fill="#E8E8F8" opacity="0.22"/>
+  <circle cx="242" cy="168" r="16" fill="#E8E8F8" opacity="0.22"/>
+</svg>

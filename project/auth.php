@@ -43,6 +43,7 @@ function registerUser(string $firstName, string $lastName, string $email, string
     $_SESSION['customer_id'] = $accountId;
     $_SESSION['customer_email'] = $email;
     $_SESSION['customer_name'] = $firstName;
+    $_SESSION['needs_vehicle_setup'] = true;
     
     return ['ok' => true, 'message' => 'Registrierung erfolgreich! Du bist jetzt angemeldet.'];
   } catch (Throwable $e) {
@@ -75,6 +76,7 @@ function loginUser(string $email, string $password): array {
     $_SESSION['customer_id'] = (int)$user['id'];
     $_SESSION['customer_email'] = $user['email'];
     $_SESSION['customer_name'] = $user['first_name'];
+    $_SESSION['needs_vehicle_setup'] = false;
     
     return ['ok' => true, 'message' => 'Anmeldung erfolgreich!'];
   } catch (Throwable $e) {

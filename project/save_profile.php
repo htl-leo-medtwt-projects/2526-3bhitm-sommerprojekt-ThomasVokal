@@ -56,6 +56,11 @@ if (isset($data['color'])) {
   $color = trim((string)$data['color']);
 }
 
+$vin = '';
+if (isset($data['vin'])) {
+  $vin = strtoupper(trim((string)$data['vin']));
+}
+
 $profile = [
   'licensePlate' => strtoupper(trim((string)$data['licensePlate'])),
   'make' => trim((string)$data['make']),
@@ -64,6 +69,7 @@ $profile = [
   'mileage' => (int)$data['mileage'],
   'engine' => $engine,
   'color' => $color,
+  'vin' => $vin,
 ];
 
 if ($profile['year'] < 1980) {
@@ -82,20 +88,33 @@ $customerId = getCurrentUserId();
 
 try {
   $pdo = getDbConnection();
-  
-  // Prüfe, ob Auto schon existiert
-  $check = $pdo->prepare(
-    'SELECT id FROM vehicles WHERE account_id = :account_id AND license_plate = :license_plate LIMIT 1'
+
+  $vehicleCheck = $pdo->prepare(
+    'SELECT id FROM vehicles WHERE account_id = :account_id ORDER BY updated_at DESC, id DESC LIMIT 1'
   );
-  $check->execute([
-    'account_id' => $customerId,
-    'license_plate' => $profile['licensePlate']
-  ]);
-  
-  $existing = $check->fetch();
-  
-  if ($existing) {
-    // UPDATE
+  $vehicleCheck->execute(['account_id' => $customerId]);
+  $existing = $vehicleCheck->fetch();
+
+  $existingVehicleId = $existing ? (int)$existing['id'] : null;
+
+  if ($profile['vin'] !== '') {
+    $vinCheckSql = 'SELECT id FROM vehicles WHERE vin = :vin';
+    $vinParams = ['vin' => $profile['vin']];
+    if ($existingVehicleId !== null) {
+      $vinCheckSql .= ' AND id <> :vehicle_id';
+      $vinParams['vehicle_id'] = $existingVehicleId;
+    }
+    $vinCheckSql .= ' LIMIT 1';
+
+    $vinCheck = $pdo->prepare($vinCheckSql);
+    $vinCheck->execute($vinParams);
+
+    if ($vinCheck->fetch()) {
+      respond(422, ['ok' => false, 'error' => 'Diese VIN ist bereits vergeben.']);
+    }
+  }
+
+  if ($existingVehicleId !== null) {
     $statement = $pdo->prepare(
       'UPDATE vehicles SET
         make = :make,
@@ -104,21 +123,22 @@ try {
         mileage = :mileage,
         engine = :engine,
         color = :color,
+        vin = :vin,
         updated_at = CURRENT_TIMESTAMP
        WHERE id = :id'
     );
     
     $statement->execute([
-      'id' => $existing['id'],
+      'id' => $existingVehicleId,
       'make' => $profile['make'],
       'model' => $profile['model'],
       'year' => $profile['year'],
       'mileage' => $profile['mileage'],
       'engine' => $engine !== '' ? $engine : null,
       'color' => $color !== '' ? $color : null,
+      'vin' => $vin !== '' ? $vin : null,
     ]);
   } else {
-    // INSERT
     $statement = $pdo->prepare(
       'INSERT INTO vehicles (
         account_id,
@@ -128,7 +148,8 @@ try {
         year,
         mileage,
         engine,
-        color
+        color,
+        vin
       ) VALUES (
         :account_id,
         :license_plate,
@@ -137,7 +158,8 @@ try {
         :year,
         :mileage,
         :engine,
-        :color
+        :color,
+        :vin
       )'
     );
 
@@ -150,12 +172,15 @@ try {
       'mileage' => $profile['mileage'],
       'engine' => $engine !== '' ? $engine : null,
       'color' => $color !== '' ? $color : null,
+      'vin' => $vin !== '' ? $vin : null,
     ]);
   }
 } catch (Throwable $exception) {
   error_log('CarFixFast DB Error: ' . $exception->getMessage());
   respond(500, ['ok' => false, 'error' => 'Datenbank nicht erreichbar: ' . $exception->getMessage()]);
 }
+
+$_SESSION['needs_vehicle_setup'] = false;
 
 respond(200, ['ok' => true]);
 

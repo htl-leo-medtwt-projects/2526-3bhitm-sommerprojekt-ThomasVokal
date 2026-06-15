@@ -46,73 +46,7 @@
         <h2 id="servicesHeading">Auswahl statt Vollkatalog</h2>
       </div>
 
-      <div class="services-grid">
-        <article class="service-card" role="article" aria-label="§57a Pickerl">
-          <div class="service-card-icon" aria-hidden="true">📋</div>
-          <div class="service-card-meta">
-            <span class="badge badge-neutral">⏱ 60 Min.</span>
-          </div>
-          <h3>§57a Pickerl</h3>
-          <p>Kurze Begutachtung mit Basisprüfung und klarer Rückmeldung vor Ort.</p>
-          <div class="service-card-footer">
-            <span class="service-price">ab € 49,–</span>
-            <a href="#" class="btn btn-outline btn-sm">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="service-card" role="article" aria-label="Ölwechsel">
-          <div class="service-card-icon" aria-hidden="true">🛢️</div>
-          <div class="service-card-meta">
-            <span class="badge badge-neutral">⏱ 60 Min.</span>
-          </div>
-          <h3>Ölwechsel</h3>
-          <p>Motoröl tauschen und Kontrolle der wichtigsten Flüssigkeiten. Einfach, direkt und sauber dokumentiert.</p>
-          <div class="service-card-footer">
-            <span class="service-price">ab € 79,–</span>
-            <a href="#" class="btn btn-outline btn-sm">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="service-card" role="article" aria-label="Bremsen-Service Platzhalter">
-          <div class="service-card-icon" aria-hidden="true">🧩</div>
-          <div class="service-card-meta">
-            <span class="badge badge-neutral">⏱ Platzhalter</span>
-          </div>
-          <h3>Bremsen-Service</h3>
-          <p>Bremsscheiben, Beläge und Bremsflüssigkeit prüfen oder erneuern.</p>
-          <div class="service-card-footer">
-            <span class="service-price">ab € --,--</span>
-            <a href="#" class="btn btn-outline btn-sm">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="service-card" role="article" aria-label="Klimaservice Platzhalter">
-          <div class="service-card-icon" aria-hidden="true">🧩</div>
-          <div class="service-card-meta">
-            <span class="badge badge-neutral">⏱ Platzhalter</span>
-          </div>
-          <h3>Klimaservice</h3>
-          <p>Kühlmittel prüfen, Anlage warten und auf Dichtheit testen.</p>
-          <div class="service-card-footer">
-            <span class="service-price">ab € --,--</span>
-            <a href="#" class="btn btn-outline btn-sm">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="service-card" role="article" aria-label="Batterie-Check Platzhalter">
-          <div class="service-card-icon" aria-hidden="true">🧩</div>
-          <div class="service-card-meta">
-            <span class="badge badge-neutral">⏱ Platzhalter</span>
-          </div>
-          <h3>Batterie-Check</h3>
-          <p>Batteriezustand messen und Startleistung bewerten.</p>
-          <div class="service-card-footer">
-            <span class="service-price">ab € --,--</span>
-            <a href="#" class="btn btn-outline btn-sm">Anfragen</a>
-          </div>
-        </article>
-
-      </div>
+      <div class="services-grid stagger-children" id="servicesGrid" aria-live="polite"></div>
     </div>
   </section>
 
@@ -168,6 +102,9 @@
       </div>
     </div>
   </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
 
 </body>
 </html>

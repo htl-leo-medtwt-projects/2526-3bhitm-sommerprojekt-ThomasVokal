@@ -1334,8 +1334,43 @@ h4 { font-size: var(--font-size-xl); }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.part-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.part-card-img-placeholder {
   color: var(--color-text-light);
+}
+
+.part-card-image-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: var(--color-text-light);
+  background: linear-gradient(135deg, rgba(124,111,247,.10), rgba(249,115,22,.08));
+}
+
+.part-card-image-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.part-card-image-label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .part-card-body {
@@ -1440,7 +1475,9 @@ h4 { font-size: var(--font-size-xl); }
 
 /* Welcome Banner */
 .welcome-banner {
-  background: linear-gradient(135deg, #0D0921, #150B3E, #1E0D5C);
+  background:
+    radial-gradient(circle at top right, rgba(99,102,241,.28), transparent 32%),
+    linear-gradient(135deg, #0B1024 0%, #111B44 52%, #1A1B63 100%);
   color: white;
   border-radius: var(--radius-2xl);
   padding: var(--space-8) var(--space-10);
@@ -1448,6 +1485,36 @@ h4 { font-size: var(--font-size-xl); }
   align-items: center;
   justify-content: space-between;
   gap: var(--space-6);
+  box-shadow: 0 24px 60px rgba(12, 18, 48, .22);
+  border: 1px solid rgba(255,255,255,.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.06), transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.welcome-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-banner h2 {
+  font-size: clamp(1.8rem, 2.4vw, 2.6rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.welcome-banner p {
+  margin: 0;
+  max-width: 68ch;
+  color: rgba(255,255,255,.82);
 }
 
 .dashboard-summary-actions {
@@ -1465,6 +1532,23 @@ h4 { font-size: var(--font-size-xl); }
 .dashboard-summary-note {
   color: rgba(255,255,255,.6);
   font-size: var(--font-size-xs);
+}
+
+.welcome-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.dashboard-summary-badge {
+  background: rgba(255,255,255,.14);
+  color: white;
+  border-color: rgba(255,255,255,.18);
+}
+
+.dashboard-summary-note {
+  color: rgba(255,255,255,.72);
 }
 
 .dashboard-section-eyebrow {
@@ -1488,6 +1572,17 @@ h4 { font-size: var(--font-size-xl); }
   margin-bottom: var(--space-8);
 }
 
+@media (max-width: 900px) {
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-summary-actions {
+    align-items: flex-start;
+  }
+}
+
 .vehicle-profile-copy {
   color: var(--color-text-muted);
   margin-top: var(--space-2);
@@ -1504,6 +1599,15 @@ h4 { font-size: var(--font-size-xl); }
   justify-content: flex-end;
   gap: var(--space-3);
   flex-wrap: wrap;
+}
+
+.service-entry-notes-group {
+  grid-column: 1 / -1;
+}
+
+.service-entry-notes {
+  resize: vertical;
+  min-height: 96px;
 }
 
 .vehicle-card-footer {

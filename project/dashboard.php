@@ -16,7 +16,7 @@ function loadUserVehicle(int $customerId): ?array {
   try {
     $pdo = getDbConnection();
     $statement = $pdo->prepare(
-      'SELECT id, license_plate, make, model, year, mileage, engine, color
+      'SELECT id, license_plate, make, model, year, mileage, engine, color, vin
        FROM vehicles
        WHERE account_id = :account_id
        ORDER BY updated_at DESC
@@ -38,6 +38,88 @@ function loadUserVehicle(int $customerId): ?array {
       'mileage' => (int)$row['mileage'],
       'engine' => (string)($row['engine'] ?? ''),
       'color' => (string)($row['color'] ?? ''),
+      'vin' => (string)($row['vin'] ?? ''),
+    ];
+  } catch (Throwable $exception) {
+    return null;
+  }
+}
+
+function loadUserServiceHistory(int $vehicleId): array {
+  try {
+    $pdo = getDbConnection();
+    $statement = $pdo->prepare(
+      'SELECT service_date, service_name, mileage, cost, mechanic, notes
+       FROM service_history
+       WHERE vehicle_id = :vehicle_id
+       ORDER BY service_date DESC, id DESC'
+    );
+    $statement->execute(['vehicle_id' => $vehicleId]);
+
+    $history = [];
+    foreach ($statement->fetchAll() as $row) {
+      $serviceDate = new DateTimeImmutable((string)$row['service_date']);
+      $serviceName = (string)$row['service_name'];
+      $cost = (float)$row['cost'];
+      $serviceText = mb_strtolower($serviceName);
+      $dotColor = 'primary';
+
+      if ($cost <= 0) {
+        $dotColor = 'success';
+      } elseif (str_contains($serviceText, 'brems')) {
+        $dotColor = 'warning';
+      }
+
+      $history[] = [
+        'date' => $serviceDate->format('d.m.Y'),
+        'service' => $serviceName,
+        'mileage' => (int)$row['mileage'],
+        'cost' => $cost,
+        'mechanic' => (string)($row['mechanic'] ?? 'Unbekannt'),
+        'notes' => (string)($row['notes'] ?? ''),
+        'dotColor' => $dotColor,
+      ];
+    }
+
+    return $history;
+  } catch (Throwable $exception) {
+    return [];
+  }
+}
+
+function loadUserAppointment(int $vehicleId): ?array {
+  try {
+    $pdo = getDbConnection();
+    $statement = $pdo->prepare(
+      'SELECT appointment_datetime, status, note
+       FROM appointments
+       WHERE vehicle_id = :vehicle_id
+       ORDER BY appointment_datetime ASC, id ASC
+       LIMIT 1'
+    );
+    $statement->execute(['vehicle_id' => $vehicleId]);
+
+    $row = $statement->fetch();
+    if (!is_array($row)) {
+      return null;
+    }
+
+    $appointmentDate = new DateTimeImmutable((string)$row['appointment_datetime']);
+    $status = (string)$row['status'];
+    $statusLabels = [
+      'angefragt' => 'Angefragt',
+      'bestaetigt' => 'Bestätigt',
+      'in_arbeit' => 'In Arbeit',
+      'abgeschlossen' => 'Abgeschlossen',
+      'storniert' => 'Storniert',
+    ];
+
+    return [
+      'title' => 'Nächster Werkstatttermin',
+      'date' => $appointmentDate->format('d.m.Y'),
+      'time' => $appointmentDate->format('H:i') . ' Uhr',
+      'status' => $statusLabels[$status] ?? ucfirst($status),
+      'note' => (string)($row['note'] ?? ''),
     ];
   } catch (Throwable $exception) {
     return null;
@@ -45,6 +127,9 @@ function loadUserVehicle(int $customerId): ?array {
 }
 
 $vehicle = loadUserVehicle($customerId);
+$serviceHistory = is_array($vehicle) ? loadUserServiceHistory((int)$vehicle['id']) : [];
+$appointment = is_array($vehicle) ? loadUserAppointment((int)$vehicle['id']) : null;
+$needsVehicleSetup = !empty($_SESSION['needs_vehicle_setup']) || !is_array($vehicle);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -97,14 +182,14 @@ $vehicle = loadUserVehicle($customerId);
     <div class="container">
 
       <!-- Welcome Banner -->
-      <div class="welcome-banner scroll-reveal" id="welcomeBanner" role="banner">
+      <div class="welcome-banner" id="welcomeBanner" role="banner">
         <div class="welcome-text">
-          <h2 id="welcomeTitle">Hallo, Max Mustermann 👋</h2>
-          <p id="welcomeSubtitle">Ihr Fahrzeug wird aktuell bei uns umsorgt. Nächster Ölwechsel in ca. 2.580 km.</p>
+          <h2 id="welcomeTitle">Hallo, <?php echo htmlspecialchars($customerName); ?> 👋</h2>
+          <p id="welcomeSubtitle">Hier finden Sie Termine, Services und den Werkstattpass auf einen Blick.</p>
         </div>
         <div class="dashboard-summary-actions">
-          <span class="badge badge-success dashboard-summary-badge">● Fahrzeug aktuell in der Werkstatt</span>
-          <span class="dashboard-summary-note">Mitglied seit März 2021</span>
+          <span class="badge badge-success dashboard-summary-badge" id="welcomeStatusBadge">● Fahrzeugdaten geladen</span>
+          <span class="dashboard-summary-note" id="welcomeSummaryNote">Werkstattpass und Servicehistorie sind bereit.</span>
         </div>
       </div>
 
@@ -142,18 +227,18 @@ $vehicle = loadUserVehicle($customerId);
               <h2 class="dashboard-workshop-title">Digitaler Werkstattpass</h2>
             </div>
             <button
+              class="btn btn-primary"
+              id="addServiceEntryBtn"
+              aria-label="Serviceeintrag hinzufügen"
+            >
+              ➕ Serviceeintrag hinzufügen
+            </button>
+            <button
               class="btn btn-outline"
               id="editVehicleBtn"
               aria-label="Fahrzeugdaten bearbeiten"
             >
               ✏️ Fahrzeugdaten bearbeiten
-            </button>
-            <button
-              class="btn btn-outline"
-              id="exportPassBtn"
-              aria-label="Werkstattpass als PDF exportieren"
-            >
-              📄 Als PDF exportieren
             </button>
           </div>
 
@@ -178,9 +263,7 @@ $vehicle = loadUserVehicle($customerId);
       <div class="modal-header">
         <div>
           <h2 class="modal-title" id="vehicleProfileTitle">Fahrzeugdaten erfassen</h2>
-          <p class="vehicle-profile-copy">
-            Bitte geben Sie Ihre Fahrzeugdaten ein.
-          </p>
+          <p class="vehicle-profile-copy">Bitte geben Sie Ihre Fahrzeugdaten ein.</p>
         </div>
         <button class="modal-close" id="vehicleProfileCloseBtn" aria-label="Dialog schließen">✕</button>
       </div>
@@ -219,11 +302,61 @@ $vehicle = loadUserVehicle($customerId);
             <label class="form-label" for="profileColor">Farbe (optional)</label>
             <input class="form-input" id="profileColor" name="color" placeholder="z. B. Silber" />
           </div>
+          <div class="form-group">
+            <label class="form-label" for="profileVin">Fahrgestellnummer (VIN, optional)</label>
+            <input class="form-input" id="profileVin" name="vin" placeholder="z. B. WVWZZZ..." autocomplete="off" />
+          </div>
         </div>
 
         <div class="vehicle-profile-actions">
           <button type="button" class="btn btn-outline" id="vehicleProfileCancelBtn">Abbrechen</button>
           <button type="submit" class="btn btn-primary">Daten speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="serviceEntryModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="serviceEntryTitle">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="serviceEntryTitle">Serviceeintrag hinzufügen</h2>
+          <p class="vehicle-profile-copy">Neuen Werkstattpass-Eintrag erfassen und direkt speichern.</p>
+        </div>
+        <button class="modal-close" id="serviceEntryCloseBtn" aria-label="Dialog schließen">✕</button>
+      </div>
+
+      <form class="modal-body" id="serviceEntryForm">
+        <div class="grid-2 vehicle-profile-grid">
+          <div class="form-group">
+            <label class="form-label" for="serviceDate">Datum *</label>
+            <input class="form-input" id="serviceDate" name="serviceDate" type="date" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="serviceMileage">Kilometerstand *</label>
+            <input class="form-input" id="serviceMileage" name="mileage" type="number" min="0" step="1" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="serviceName">Servicebezeichnung *</label>
+            <input class="form-input" id="serviceName" name="serviceName" required placeholder="z. B. Ölwechsel inkl. Filter" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="serviceCost">Kosten in € *</label>
+            <input class="form-input" id="serviceCost" name="cost" type="number" min="0" step="0.01" required placeholder="z. B. 89.00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="serviceMechanic">Mechaniker (optional)</label>
+            <input class="form-input" id="serviceMechanic" name="mechanic" placeholder="z. B. Karl Hofbauer" />
+          </div>
+          <div class="form-group service-entry-notes-group">
+            <label class="form-label" for="serviceNotes">Notiz (optional)</label>
+            <textarea class="form-input service-entry-notes" id="serviceNotes" name="notes" rows="4" placeholder="Zusätzliche Infos zum Serviceeintrag"></textarea>
+          </div>
+        </div>
+
+        <div class="vehicle-profile-actions">
+          <button type="button" class="btn btn-outline" id="serviceEntryCancelBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary">Eintrag speichern</button>
         </div>
       </form>
     </div>
@@ -239,6 +372,9 @@ $vehicle = loadUserVehicle($customerId);
       $initialProfile['firstName'] = $customerName;
     ?>
     window.PHP_SESSION_PROFILE = <?php echo json_encode($initialProfile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    window.DASHBOARD_HISTORY = <?php echo json_encode($serviceHistory, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    window.DASHBOARD_APPOINTMENT = <?php echo json_encode($appointment, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    window.NEEDS_VEHICLE_SETUP = <?php echo json_encode($needsVehicleSetup); ?>;
     window.CUSTOMER_ID = <?php echo json_encode($customerId); ?>;
   </script>
   <script src="js/data.js"></script>

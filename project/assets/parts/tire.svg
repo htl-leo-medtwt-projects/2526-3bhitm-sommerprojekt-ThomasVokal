@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-label="Reifen Vorschau">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1F2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" rx="28" fill="url(#bg)"/>
+  <circle cx="200" cy="120" r="72" fill="none" stroke="#CBD5E1" stroke-width="18" opacity="0.22"/>
+  <circle cx="200" cy="120" r="48" fill="none" stroke="#7C6FF7" stroke-width="14" opacity="0.85"/>
+  <circle cx="200" cy="120" r="20" fill="#CBD5E1" opacity="0.25"/>
+  <path d="M200 48v144M128 120h144M150 70l100 100M250 70L150 170" stroke="#E8E8F8" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+</svg>

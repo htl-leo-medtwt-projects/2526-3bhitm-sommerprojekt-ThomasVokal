@@ -22,14 +22,14 @@ const state = {
 };
 
 const CATEGORY_IMAGE_FALLBACKS = {
-  bremsen: 'assets/parts/brake.svg',
-  filter: 'assets/parts/filter.svg',
-  oele: 'assets/parts/oil.svg',
-  zuendung: 'assets/parts/spark.svg',
-  reifen: 'assets/parts/tire.svg',
-  fahrwerk: 'assets/parts/suspension.svg',
-  auspuff: 'assets/parts/default.svg',
-  sonstiges: 'assets/parts/default.svg',
+  bremsen: 'assets/parts/brake.png',
+  filter: 'assets/parts/filter.png',
+  oele: 'assets/parts/oil.png',
+  zuendung: 'assets/parts/spark.png',
+  reifen: 'assets/parts/tire.png',
+  fahrwerk: 'assets/parts/suspension.png',
+  auspuff: 'assets/parts/default.png',
+  sonstiges: 'assets/parts/default.png',
 };
 
 function formatEuro(value) {

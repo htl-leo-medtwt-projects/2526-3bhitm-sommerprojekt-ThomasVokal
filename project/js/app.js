@@ -95,3 +95,73 @@ function getFooterHTML() {
     </footer>
   `;
 }
+
+// ============================================================
+// Burger Menu Toggle
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  const burger = document.getElementById('burgerMenu');
+  const mobileMenu = document.getElementById('mobileMenu');
+  
+  if (burger && mobileMenu) {
+    // Burger-Klick öffnet/schließt Menü
+    burger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isOpen = mobileMenu.classList.toggle('is-open');
+      burger.classList.toggle('is-open');
+      burger.setAttribute('aria-expanded', isOpen);
+      burger.setAttribute('aria-label', isOpen ? 'Menü schließen' : 'Menü öffnen');
+    });
+
+    // Klick auf einen Link schließt das Menü
+    const mobileLinks = mobileMenu.querySelectorAll('.nav-link, .btn');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', function() {
+        mobileMenu.classList.remove('is-open');
+        burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Menü öffnen');
+      });
+    });
+
+    // Klick außerhalb schließt das Menü
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav')) {
+        mobileMenu.classList.remove('is-open');
+        burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Menü öffnen');
+      }
+    });
+
+    // Escape-Taste schließt Menü
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) {
+        mobileMenu.classList.remove('is-open');
+        burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Menü öffnen');
+        burger.focus();
+      }
+    });
+  }
+});
+
+// ============================================================
+// Aktive Navigation automatisch setzen
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const navLinks = document.querySelectorAll('.nav-link');
+  
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === currentPath) {
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.classList.remove('active');
+      link.removeAttribute('aria-current');
+    }
+  });
+});

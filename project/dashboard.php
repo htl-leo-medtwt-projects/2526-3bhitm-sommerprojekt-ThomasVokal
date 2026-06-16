@@ -49,7 +49,7 @@ function loadUserServiceHistory(int $vehicleId): array {
   try {
     $pdo = getDbConnection();
     $statement = $pdo->prepare(
-      'SELECT service_date, service_name, mileage, cost, mechanic, notes
+      'SELECT id, service_date, service_name, mileage, cost, mechanic, notes
        FROM service_history
        WHERE vehicle_id = :vehicle_id
        ORDER BY service_date DESC, id DESC'
@@ -71,6 +71,7 @@ function loadUserServiceHistory(int $vehicleId): array {
       }
 
       $history[] = [
+        'id' => (int)$row['id'],
         'date' => $serviceDate->format('d.m.Y'),
         'service' => $serviceName,
         'mileage' => (int)$row['mileage'],
@@ -146,21 +147,35 @@ $needsVehicleSetup = !empty($_SESSION['needs_vehicle_setup']) || !is_array($vehi
   <nav class="nav" role="navigation" aria-label="Hauptnavigation">
     <div class="container nav-inner">
       <a href="index.html" class="nav-logo" aria-label="CarFixFast Startseite">
-        <div class="logo-icon" aria-hidden="true">🔧</div>
-        <span>Car<span class="logo-fast">Fix</span>Fast</span>
+        <img src="./assets/img/logo.png" alt="logo">
       </a>
 
-      <div class="nav-links">
-        <a href="index.html" class="nav-link"><span>Startseite</span></a>
+      <!-- Desktop Navigation -->
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link active" aria-current="page"><span>Startseite</span></a>
         <a href="leistungen.html" class="nav-link"><span>Leistungen</span></a>
         <a href="ersatzteile.html" class="nav-link"><span>Ersatzteile</span></a>
-        <a href="dashboard.php" class="nav-link active" aria-current="page"><span>Mein Bereich</span></a>
+        <a href="dashboard.php" class="nav-link"><span>Dashboard</span></a>
+        <a href="logout.php" class="btn btn-outline btn-sm nav-cta" style="border-color: var(--color-danger); color: var(--color-danger);">Abmelden</a>
+        <a href="leistungen.html" class="btn btn-primary btn-sm nav-cta">Termin buchen</a>
       </div>
 
-      <div style="display: flex; gap: 10px; align-items: center;">
-        <span style="font-size: 14px; color: #666;">👤 <?php echo htmlspecialchars($customerName); ?></span>
-        <a href="logout.php" class="btn btn-outline btn-sm" style="margin: 0;">Abmelden</a>
-      </div>
+      <!-- Burger Menu Button -->
+      <button class="nav-hamburger" id="burgerMenu" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="nav-mobile" id="mobileMenu" role="navigation" aria-label="Mobile Navigation">
+      <a href="index.html" class="nav-link active" aria-current="page"><span>Startseite</span></a>
+      <a href="leistungen.html" class="nav-link"><span>Leistungen</span></a>
+      <a href="ersatzteile.html" class="nav-link"><span>Ersatzteile</span></a>
+      <a href="dashboard.php" class="nav-link"><span>Dashboard</span></a>
+      <a href="logout.php" class="btn btn-outline btn-block" style="border-color: var(--color-danger); color: var(--color-danger); margin-bottom: var(--space-4);">🚪 Abmelden</a>
+      <a href="leistungen.html" class="btn btn-primary btn-block nav-cta">Termin buchen</a>
     </div>
   </nav>
 
@@ -223,23 +238,25 @@ $needsVehicleSetup = !empty($_SESSION['needs_vehicle_setup']) || !is_array($vehi
         <div class="dashboard-full">
           <div class="dashboard-workshop-header">
             <div>
-              <div class="eyebrow">USP – Ihr persönliches Logbuch</div>
+              <div class="eyebrow">Ihr persönliches Logbuch</div>
               <h2 class="dashboard-workshop-title">Digitaler Werkstattpass</h2>
             </div>
-            <button
-              class="btn btn-primary"
-              id="addServiceEntryBtn"
-              aria-label="Serviceeintrag hinzufügen"
-            >
-              ➕ Serviceeintrag hinzufügen
-            </button>
-            <button
-              class="btn btn-outline"
-              id="editVehicleBtn"
-              aria-label="Fahrzeugdaten bearbeiten"
-            >
-              ✏️ Fahrzeugdaten bearbeiten
-            </button>
+            <div class="dashboard-workshop-actions">
+              <button
+                class="btn btn-primary"
+                id="addServiceEntryBtn"
+                aria-label="Serviceeintrag hinzufügen"
+              >
+                ➕ Serviceeintrag hinzufügen
+              </button>
+              <button
+                class="btn btn-outline"
+                id="editVehicleBtn"
+                aria-label="Fahrzeugdaten bearbeiten"
+              >
+                ✏️ Fahrzeugdaten bearbeiten
+              </button>
+            </div>
           </div>
 
           <!-- Stats Row -->

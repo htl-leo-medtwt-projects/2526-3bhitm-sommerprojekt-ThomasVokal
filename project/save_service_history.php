@@ -111,6 +111,8 @@ try {
     'notes' => $notes !== '' ? $notes : null,
   ]);
 
+  $entryId = (int)$pdo->lastInsertId();
+
   $updateMileageStatement = $pdo->prepare(
     'UPDATE vehicles
      SET mileage = GREATEST(mileage, :mileage),
@@ -133,6 +135,7 @@ try {
   respond(200, [
     'ok' => true,
     'entry' => [
+      'id' => $entryId,
       'date' => $dateObject->format('d.m.Y'),
       'service' => $serviceName,
       'mileage' => $mileage,

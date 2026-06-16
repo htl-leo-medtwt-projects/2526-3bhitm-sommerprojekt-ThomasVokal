@@ -69,8 +69,7 @@ if (isset($_SESSION['customer_id'])) {
   <nav class="nav" role="navigation" aria-label="Hauptnavigation">
     <div class="container nav-inner">
       <a href="index.html" class="nav-logo" aria-label="CarFixFast Startseite">
-        <div class="logo-icon" aria-hidden="true">🔧</div>
-        <span>Car<span class="logo-fast">Fix</span>Fast</span>
+          <img src="./assets/img/logo.png" alt="logo">
       </a>
       <div></div>
     </div>

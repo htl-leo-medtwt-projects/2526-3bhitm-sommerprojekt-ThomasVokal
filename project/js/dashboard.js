@@ -70,6 +70,29 @@ async function saveServiceEntry(entry) {
   return result.entry;
 }
 
+async function deleteServiceEntry(entryId) {
+  const response = await fetch('delete_service_history.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id: entryId }),
+  });
+
+  let result = null;
+  try {
+    result = await response.json();
+  } catch (_) {
+    throw new Error('Serverantwort ist ungueltig.');
+  }
+
+  if (!response.ok || !result || !result.ok) {
+    throw new Error(result && result.error ? result.error : 'Eintrag konnte nicht geloescht werden.');
+  }
+
+  return result.deletedId;
+}
+
 function getVehicleData(profile) {
   let mileage = Number(profile.mileage);
   if (!Number.isFinite(mileage) || mileage < 0) {
@@ -145,7 +168,7 @@ function renderVehicleCard(vehicle) {
       <div class="vehicle-icon" aria-hidden="true">🚗</div>
       <div>
         <div class="vehicle-title">${escapeHtml(vehicle.make)} ${escapeHtml(vehicle.model)}</div>
-        <div class="vehicle-subtitle">${escapeHtml(vehicle.engine)} · ${vehicle.year} · ${escapeHtml(vehicle.color)}</div>
+        <div class="vehicle-subtitle">${vehicle.year} · ${escapeHtml(vehicle.color)}</div>
       </div>
     </div>
 
@@ -163,8 +186,8 @@ function renderVehicleCard(vehicle) {
         <span>${vehicle.year}</span>
       </div>
       <div class="spec-item">
-        <label>Reifengröße</label>
-        <span>${escapeHtml(vehicle.tireSize)}</span>
+        <label>Motor</label>
+        <span>${escapeHtml(vehicle.engine)}</span>
       </div>
     </div>
 
@@ -307,9 +330,10 @@ function renderTimeline() {
   for (const entry of state.history) {
     const dotColor = entry.dotColor ? entry.dotColor : 'primary';
     html += `
-      <div class="timeline-item" role="listitem" aria-label="${escapeHtml(entry.service)}, ${escapeHtml(entry.date)}">
+      <div class="timeline-item" role="listitem" data-entry-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(entry.service)}, ${escapeHtml(entry.date)}">
         <div class="timeline-dot dot-${dotColor}" aria-hidden="true"></div>
         <div class="timeline-card timeline-card-content">
+          <button type="button" class="timeline-delete-btn" data-delete-entry="${escapeHtml(entry.id)}" aria-label="Serviceeintrag löschen">🗑️</button>
           <div class="timeline-service">${escapeHtml(entry.service)}</div>
           <div class="timeline-date">📅 ${escapeHtml(entry.date)} · 📍 ${entry.mileage.toLocaleString('de-AT')} km</div>
           <div class="timeline-meta">
@@ -322,6 +346,44 @@ function renderTimeline() {
   }
 
   el.innerHTML = html;
+}
+
+function initTimelineDeleteActions() {
+  const timeline = document.getElementById('historyTimeline');
+  if (!timeline) return;
+
+  timeline.addEventListener('click', async (event) => {
+    const deleteButton = event.target.closest('[data-delete-entry]');
+    if (!deleteButton) return;
+
+    const entryId = Number(deleteButton.getAttribute('data-delete-entry'));
+    if (!Number.isFinite(entryId) || entryId <= 0) return;
+
+    const entry = state.history.find((item) => Number(item.id) === entryId);
+    const entryLabel = entry ? `${entry.service} (${entry.date})` : 'diesen Eintrag';
+
+    if (!window.confirm(`Möchten Sie ${entryLabel} wirklich löschen?`)) {
+      return;
+    }
+
+    deleteButton.disabled = true;
+
+    try {
+      await deleteServiceEntry(entryId);
+      state.history = state.history.filter((item) => Number(item.id) !== entryId);
+
+      if (state.profile) {
+        renderDashboard(state.profile);
+      } else {
+        renderTimeline();
+      }
+
+      showToast('Serviceeintrag wurde gelöscht.', 'success', 3200);
+    } catch (error) {
+      deleteButton.disabled = false;
+      showToast(error.message, 'warning', 3600);
+    }
+  });
 }
 
 function renderWelcome(profile, vehicle) {
@@ -408,6 +470,10 @@ function closeProfileModal() {
   document.body.classList.remove('modal-open');
 }
 
+function padTwoDigits(value) {
+  return value < 10 ? `0${value}` : String(value);
+}
+
 function setServiceEntryDefaults() {
   const form = document.getElementById('serviceEntryForm');
   if (!form) return;
@@ -424,8 +490,8 @@ function setServiceEntryDefaults() {
   }
 
   const today = new Date();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  const month = padTwoDigits(today.getMonth() + 1);
+  const day = padTwoDigits(today.getDate());
   const isoDate = `${today.getFullYear()}-${month}-${day}`;
 
   serviceDateInput.value = isoDate;
@@ -667,6 +733,7 @@ function init() {
   mountFooter();
   initProfileModal();
   initServiceEntryModal();
+  initTimelineDeleteActions();
   initActions();
 
   state.profile = loadProfileFromSession() || buildFallbackProfile();

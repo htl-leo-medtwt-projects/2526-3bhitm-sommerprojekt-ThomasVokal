@@ -13,18 +13,33 @@
   <nav class="nav" role="navigation" aria-label="Hauptnavigation">
     <div class="container nav-inner">
       <a href="index.html" class="nav-logo" aria-label="CarFixFast Startseite">
-        <div class="logo-icon" aria-hidden="true">🔧</div>
-        <span>Car<span class="logo-fast">Fix</span>Fast</span>
+        <img src="./assets/img/logo.png" alt="logo">
       </a>
 
-      <div class="nav-links">
-        <a href="index.html" class="nav-link"><span>Startseite</span></a>
+      <!-- Desktop Navigation -->
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link active" aria-current="page"><span>Startseite</span></a>
         <a href="leistungen.html" class="nav-link"><span>Leistungen</span></a>
-        <a href="ersatzteile.html" class="nav-link active" aria-current="page"><span>Ersatzteile</span></a>
-        <a href="dashboard.php" class="nav-link"><span>Mein Bereich</span></a>
+        <a href="ersatzteile.html" class="nav-link"><span>Ersatzteile</span></a>
+        <a href="dashboard.php" class="nav-link"><span>Dashboard</span></a>
+        <a href="leistungen.html" class="btn btn-primary btn-sm nav-cta">Termin buchen</a>
       </div>
 
-      <a href="tel:+43732123456" class="btn btn-primary btn-sm nav-cta">📞 Jetzt anrufen</a>
+      <!-- Burger Menu Button -->
+      <button class="nav-hamburger" id="burgerMenu" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="nav-mobile" id="mobileMenu" role="navigation" aria-label="Mobile Navigation">
+      <a href="index.html" class="nav-link active" aria-current="page"><span>Startseite</span></a>
+      <a href="leistungen.html" class="nav-link"><span>Leistungen</span></a>
+      <a href="ersatzteile.html" class="nav-link"><span>Ersatzteile</span></a>
+      <a href="dashboard.php" class="nav-link"><span>Dashboard</span></a>
+      <a href="leistungen.html" class="btn btn-primary btn-block nav-cta">Termin buchen</a>
     </div>
   </nav>
 

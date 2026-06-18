@@ -379,6 +379,24 @@ $needsVehicleSetup = !empty($_SESSION['needs_vehicle_setup']) || !is_array($vehi
     </div>
   </div>
 
+  <!-- Bestätigungsmodal zum Löschen -->
+<div class="modal-overlay" id="deleteConfirmModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal modal-confirm">
+    <div class="modal-header">
+      <h3 class="modal-title">⚠️ Eintrag löschen</h3>
+      <button class="modal-close" id="deleteConfirmCloseBtn" aria-label="Schließen">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="deleteConfirmMessage">Möchten Sie diesen Eintrag wirklich löschen?</p>
+      <p class="text-muted" style="font-size: var(--font-size-sm); margin-top: var(--space-2);">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="deleteConfirmCancelBtn">Abbrechen</button>
+      <button class="btn btn-danger" id="deleteConfirmBtn">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
   <!-- FOOTER -->
   <div id="footerMount"></div>
 

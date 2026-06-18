@@ -1,6 +1,7 @@
 'use strict';
 
 let toastContainer = null;
+let toastTimeouts = new Map();
 
 function escapeHtml(value) {
   const div = document.createElement('div');
@@ -20,8 +21,32 @@ function getToastContainer() {
 }
 
 function removeToast(toast) {
+  if (!toast || !toast.parentNode) return;
+  
+  // Clear any pending timeout for this toast
+  if (toast._timeoutId) {
+    clearTimeout(toast._timeoutId);
+    toast._timeoutId = null;
+  }
+  
   toast.classList.add('is-leaving');
-  toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  
+  // Remove from DOM after animation
+  const removeHandler = () => {
+    if (toast.parentNode) {
+      toast.remove();
+    }
+    toast.removeEventListener('animationend', removeHandler);
+  };
+  
+  toast.addEventListener('animationend', removeHandler, { once: true });
+  
+  // Fallback: remove after 500ms if animationend doesn't fire
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.remove();
+    }
+  }, 500);
 }
 
 function showToast(message, type = 'success', duration = 3500) {
@@ -37,16 +62,53 @@ function showToast(message, type = 'success', duration = 3500) {
   toast.setAttribute('role', 'status');
   toast.innerHTML = `
     <span class="toast-icon">${icons[type] || icons.info}</span>
-    <span>${escapeHtml(message)}</span>
+    <span class="toast-message">${escapeHtml(message)}</span>
+    <button class="toast-close" aria-label="Schließen">✕</button>
   `;
 
-  getToastContainer().appendChild(toast);
+  // Add to container
+  const container = getToastContainer();
+  container.appendChild(toast);
 
-  const timer = setTimeout(() => removeToast(toast), duration);
-  toast.addEventListener('click', () => {
-    clearTimeout(timer);
+  // Remove function
+  const removeToastFn = () => {
     removeToast(toast);
+  };
+
+  // Auto-remove after duration
+  const timeoutId = setTimeout(removeToastFn, duration);
+  toast._timeoutId = timeoutId;
+
+  // Click on toast closes it (except on close button)
+  toast.addEventListener('click', (e) => {
+    if (e.target.classList.contains('toast-close')) return;
+    removeToastFn();
   });
+
+  // Close button
+  const closeBtn = toast.querySelector('.toast-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeToastFn();
+    });
+  }
+
+  // Pause auto-remove on hover
+  toast.addEventListener('mouseenter', () => {
+    if (toast._timeoutId) {
+      clearTimeout(toast._timeoutId);
+      toast._timeoutId = null;
+    }
+  });
+
+  toast.addEventListener('mouseleave', () => {
+    if (!toast._timeoutId && toast.parentNode) {
+      toast._timeoutId = setTimeout(removeToastFn, 1500);
+    }
+  });
+
+  return toast;
 }
 
 function getFooterHTML() {
@@ -104,7 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const mobileMenu = document.getElementById('mobileMenu');
   
   if (burger && mobileMenu) {
-    // Burger-Klick öffnet/schließt Menü
     burger.addEventListener('click', function(e) {
       e.stopPropagation();
       const isOpen = mobileMenu.classList.toggle('is-open');
@@ -113,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
       burger.setAttribute('aria-label', isOpen ? 'Menü schließen' : 'Menü öffnen');
     });
 
-    // Klick auf einen Link schließt das Menü
     const mobileLinks = mobileMenu.querySelectorAll('.nav-link, .btn');
     mobileLinks.forEach(link => {
       link.addEventListener('click', function() {
@@ -124,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
 
-    // Klick außerhalb schließt das Menü
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.nav')) {
         mobileMenu.classList.remove('is-open');
@@ -134,7 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Escape-Taste schließt Menü
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) {
         mobileMenu.classList.remove('is-open');

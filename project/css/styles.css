@@ -2661,3 +2661,61 @@ body.modal-open {
     min-width: unset;
     max-width: 100%;
   }
+
+  /* Danger Button */
+.btn-danger {
+  background-color: var(--color-danger);
+  color: white;
+  box-shadow: 0 1px 4px rgba(248,113,113,.30);
+}
+.btn-danger:hover {
+  background-color: #DC2626;
+  box-shadow: 0 4px 16px rgba(248,113,113,.45);
+  transform: translateY(-1px);
+}
+.btn-danger::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+  transform: skewX(-15deg);
+  pointer-events: none;
+}
+.btn-danger:hover::after {
+  animation: shimmer 0.55s ease forwards;
+}
+
+/* Confirm Modal spezifisch */
+.modal-confirm {
+  max-width: 440px;
+}
+.modal-confirm .modal-body {
+  padding: var(--space-6);
+}
+.modal-confirm .modal-footer {
+  padding: var(--space-4) var(--space-6);
+}
+.modal-confirm .modal-footer .btn {
+  min-width: 100px;
+}
+
+/* Toast Close Button */
+.toast-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.5);
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-2);
+  margin-left: auto;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.toast-close:hover {
+  background-color: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.9);
+}

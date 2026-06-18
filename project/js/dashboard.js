@@ -348,11 +348,109 @@ function renderTimeline() {
   el.innerHTML = html;
 }
 
+// ============================================================
+// Delete Confirmation Modal
+// ============================================================
+let deletePendingEntryId = null;
+let deletePendingEntryLabel = '';
+
+function openDeleteConfirmModal(entryId, entryLabel) {
+  const overlay = document.getElementById('deleteConfirmModal');
+  const message = document.getElementById('deleteConfirmMessage');
+  const confirmBtn = document.getElementById('deleteConfirmBtn');
+  
+  if (!overlay || !message || !confirmBtn) return;
+  
+  deletePendingEntryId = entryId;
+  deletePendingEntryLabel = entryLabel;
+  
+  message.textContent = `Möchten Sie "${entryLabel}" wirklich löschen?`;
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = '🗑️ Löschen';
+  
+  overlay.classList.add('is-open');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function closeDeleteConfirmModal() {
+  const overlay = document.getElementById('deleteConfirmModal');
+  if (!overlay) return;
+  
+  overlay.classList.remove('is-open');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+  
+  deletePendingEntryId = null;
+  deletePendingEntryLabel = '';
+}
+
+function initDeleteConfirmModal() {
+  const overlay = document.getElementById('deleteConfirmModal');
+  const closeBtn = document.getElementById('deleteConfirmCloseBtn');
+  const cancelBtn = document.getElementById('deleteConfirmCancelBtn');
+  const confirmBtn = document.getElementById('deleteConfirmBtn');
+  
+  if (!overlay) return;
+  
+  // Schließen-Buttons
+  if (closeBtn) closeBtn.addEventListener('click', closeDeleteConfirmModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeDeleteConfirmModal);
+  
+  // Klick auf Overlay schließt
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) {
+      closeDeleteConfirmModal();
+    }
+  });
+  
+  // Escape schließt
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && overlay.classList.contains('is-open')) {
+      closeDeleteConfirmModal();
+    }
+  });
+  
+  // Lösch-Button
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      const entryId = deletePendingEntryId;
+      const entryLabel = deletePendingEntryLabel;
+      
+      if (!entryId || entryId <= 0) {
+        closeDeleteConfirmModal();
+        return;
+      }
+      
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = '⏳ Lösche...';
+      
+      try {
+        await deleteServiceEntry(entryId);
+        state.history = state.history.filter((item) => Number(item.id) !== entryId);
+        
+        if (state.profile) {
+          renderDashboard(state.profile);
+        } else {
+          renderTimeline();
+        }
+        
+        closeDeleteConfirmModal();
+        showToast(`"${entryLabel}" wurde gelöscht.`, 'success', 3200);
+      } catch (error) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = '🗑️ Löschen';
+        showToast(error.message, 'warning', 3600);
+      }
+    });
+  }
+}
+
 function initTimelineDeleteActions() {
   const timeline = document.getElementById('historyTimeline');
   if (!timeline) return;
 
-  timeline.addEventListener('click', async (event) => {
+  timeline.addEventListener('click', (event) => {
     const deleteButton = event.target.closest('[data-delete-entry]');
     if (!deleteButton) return;
 
@@ -362,27 +460,8 @@ function initTimelineDeleteActions() {
     const entry = state.history.find((item) => Number(item.id) === entryId);
     const entryLabel = entry ? `${entry.service} (${entry.date})` : 'diesen Eintrag';
 
-    if (!window.confirm(`Möchten Sie ${entryLabel} wirklich löschen?`)) {
-      return;
-    }
-
-    deleteButton.disabled = true;
-
-    try {
-      await deleteServiceEntry(entryId);
-      state.history = state.history.filter((item) => Number(item.id) !== entryId);
-
-      if (state.profile) {
-        renderDashboard(state.profile);
-      } else {
-        renderTimeline();
-      }
-
-      showToast('Serviceeintrag wurde gelöscht.', 'success', 3200);
-    } catch (error) {
-      deleteButton.disabled = false;
-      showToast(error.message, 'warning', 3600);
-    }
+    // Modal öffnen statt alert()
+    openDeleteConfirmModal(entryId, entryLabel);
   });
 }
 
@@ -733,6 +812,7 @@ function init() {
   mountFooter();
   initProfileModal();
   initServiceEntryModal();
+  initDeleteConfirmModal();
   initTimelineDeleteActions();
   initActions();
 
